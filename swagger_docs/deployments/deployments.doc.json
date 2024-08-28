@@ -1,0 +1,271 @@
+{
+  "paths": {
+    "/deployments": {
+      "get": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Returns a list of all Deployments.",
+        "description": "Returns a list of all Deployments.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Deployment"
+              }
+            }
+          },
+          "422": {
+            "description": "Error while attempting to retrieve Deployments."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Create a new Deployment.",
+        "description": "Creating a new Deployment performs the following actions:\n* Creates a new Deployment.\n* If the AssociatedPod doesn't exist, it creates that associated Pod.\n* Adds the Deployment to the associated Pod's list of Child Deployments.\n* Performs queue handling for Parent-Pod. \n* Returns the new Deployment, new/updated Pod, Pod Status, and Queue Message.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deployment object that represents your Deployment.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created Deployment successfully.\nPossible Pod-Status messages:\n* Failed to create Pod\n* Successfully updated Pod {POD_NAME} with {DEPLOYMENT_NAME} details.\n\nPossible 'Queue-Handling for Pod {POD_NAME}' messages: \n* Queuing must be enabled for Pod Cloud_3a before handling.\n* Deployments successfully to set to Active: {DEPLOYMENT_NAME}\n* Deployments failed to set to Active (Not Found / Error): {DEPLOYMENT_NAME}\n* Deployments still queued: {DEPLOYMENT_NAME}"
+          },
+          "400": {
+            "description": "Possible messages:\n* There was a syntax error found in your request, please make sure that it is valid and try again\n* {PATH} is not in schema and strict mode is set to throw\n* {PATH} is not valid, {VALUE} is not a valid Date\n* {PATH} is required.\n* Path 'name' {PATH} is shorter than the minimum allowed length (5).\n* Path 'name' {PATH} is longer than the maximum allowed length (50)."
+          },
+          "422": {
+            "description": "Name already exists."
+          },
+          "500": {
+            "description": "Internal Server Error."
+          }
+        }
+      }
+    },
+    "/deployments/search": {
+      "get": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Returns a list of Deployments that match the provided query parameters.",
+        "description": "Returns a list of every Deployment that matches the parameter(s) provided in the {query} tag. Filter Deployment's by providing parameter value(s) that must be satisfied. Any key attribute of a Deployment can be filtered for.\r\nFormat is \"key=value\" for filtering by one key-field. Extra fields can be added with \"&\" symbols placed in-between.\r\nExample: \"deployments\/search?queueEnabled=true&timeoutDuration=60\" will return all Deployments where queueEnabled is true and timeoutDuration is 60.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the Deployment that needs to be fetched",
+            "required": false,
+            "allowReserved": true,
+            "type": "string",
+            "example": "depl1a"
+          },
+          {
+            "name": "associatedPod",
+            "in": "query",
+            "description": "The name of the Pod Associated with the Deployment(s) that needs to be fetched",
+            "required": false,
+            "allowReserved": true,
+            "type": "string",
+            "example": "cloud1a"
+          },
+          {
+            "name": "queueStatus",
+            "in": "query",
+            "description": "The current queue status of the Deployment(s) that needs to be filtered",
+            "required": false,
+            "allowReserved": true,
+            "type": "string",
+            "enum": [
+              "Queued",
+              "Active"
+            ],
+            "example": "Queued"
+          },
+          {
+            "name": "jobType",
+            "in": "query",
+            "description": "The current job type status of the Deployment(s) that needs to be filtered",
+            "required": false,
+            "allowReserved": true,
+            "type": "string",
+            "enum": [
+              "Install",
+              "Upgrade"
+            ],
+            "example": "Install"
+          },
+          {
+            "name": "customTimeout",
+            "in": "query",
+            "description": "The Custom Timeout value that needs to be filtered",
+            "required": false,
+            "allowReserved": true,
+            "type": "integer",
+            "example": "5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Deployment"
+              }
+            }
+          },
+          "422": {
+            "description": "Improperly structured query. Make sure to use \"key=value\" syntax."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/deployments/{Id}": {
+      "get": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Returns a Deployment.",
+        "description": "Returns a Deployment with the specified ID value (if it exists).",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the Deployment to retrieve.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deployment successfully retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          },
+          "404": {
+            "description": "A Deployment with that ID does not exist."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Delete a Deployment.",
+        "description": "Delete a Deployment and remove its entry from its associated Pods list of child Deployments.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the Deployment to delete.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message: Successfully deleted Deployment. Parent-Pod updated successfully.\nQueue-Message: A message to indicate current Parent-Pod queue-handling"
+          },
+          "404": {
+            "description": "A Deployment with that ID does not exist."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "deployments"
+        ],
+        "summary": "Update a Deployment.",
+        "description": "Update a Deployment and run queue-handling on its Parent-Pod.",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the Deployment to update.",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deployment object you want to update. Partial update possible, not all fields in body required.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated Deployment.\nPossible 'Queue-Handling for Pod {POD_NAME}' messages: \n* Queuing must be enabled for Pod Cloud_3a before handling.\n* Deployments successfully to set to Active: {DEPLOYMENT_NAME}\n* Deployments failed to set to Active (Not Found / Error): {DEPLOYMENT_NAME}\n* Deployments still queued: {DEPLOYMENT_NAME}",
+            "schema": {
+              "$ref": "#/definitions/Deployment"
+            }
+          },
+          "400": {
+            "description": "Possible messages:\n* There was a syntax error found in your request, please make sure that it is valid and try again\n* {PATH} is not in schema and strict mode is set to throw\n* {PATH} is not valid, {VALUE} is not an integer\n* {PATH} is less than minimum allowed value (0)\n* {PATH} is required"
+          },
+          "404": {
+            "description": "A Deployment with that ID does not exist."
+          },
+          "406": {
+            "description": "Deployment 'name'/'associatedPod' field is immutable and cannot be modified."
+          },
+          "422": {
+            "description": "Name already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  }
+}

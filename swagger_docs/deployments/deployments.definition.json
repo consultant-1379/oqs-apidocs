@@ -1,0 +1,62 @@
+{
+  "definitions": {
+    "Deployment": {
+      "required": [
+        "name",
+        "associatedPod"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_]*$",
+          "unique": true,
+          "minLength": 5,
+          "maxLength": 50,
+          "example": "Deployment1a"
+        },
+        "associatedPod": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_]*$",
+          "minLength": 5,
+          "maxLength": 20,
+          "example": "Cloud1a"
+        },
+        "queueStatus": {
+          "type": "string",
+          "enum": [
+            "Queued",
+            "Active"
+          ],
+          "example": "Queued"
+        },
+        "jobType": {
+          "type": "string",
+          "enum": [
+            "Install",
+            "Upgrade"
+          ],
+          "example": "Install"
+        },
+        "product": {
+          "type": "string",
+          "enum": [
+            "vENM",
+            "cENM",
+            "CCD"
+          ],
+          "example": "vENM"
+        },
+        "productSet": {
+          "type": "string",
+          "note": "This value format is 'product_set_drop::product_set_version'. If any reason the value format mentioned cannot be used, it will accept any given value related to Product Set value and display it on UI under 'Product Set' column",
+          "example": "22.03::22.03.123"
+        },
+        "customTimeout": {
+          "type": "integer",
+          "note": "Custom Timeout value can be set when creating deployments via REST. The integer represents the amount of minutes before a deployment times out. If this value is not set, the deployment will use the default timeout value of 24 hours",
+          "example": 60
+        }
+      }
+    }
+  }
+}

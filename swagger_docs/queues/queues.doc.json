@@ -1,0 +1,20 @@
+{
+  "paths": {
+    "/queues/verifyRelationships": {
+      "post": {
+        "tags": [ "queues" ],
+        "description": "This REST call iterates through each Deployment in the Database, performing the following actions:\n* Searches for its referenced 'Associated-Pod' (Parent) in the Database\n* -> If the Pod exists, a check is performed on it to see if the currently iterated Deployment is included in its list of referenced Deployments - If not, the Deployment is added to this list.\n* -> If the Pod does not exist, it is created with a reference to the current Deployment.\n\nA message is then returned to state how many updates/creations occurred throughout the process.",
+        "summary": "Re-Associates Pod-Deployment relationships that have not been set.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Possible combination of messages:\n* Deployments successfully re-associated: a, b, c.\n* Deployments failed to re-associate (Not Found): m, n, o.\n* Deployments failed to re-associate (Error): x, y, z.\n* No relationships need to be re-associated."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  }
+}

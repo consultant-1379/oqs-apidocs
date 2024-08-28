@@ -1,0 +1,8 @@
+{
+  "tags": [
+    {
+      "name": "pods",
+      "description": "All REST API calls available for pods."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "tags": [
+    {
+      "name": "queues",
+      "description": "All REST API calls available for the queuing mechanism."
+    }
+  ]
+}

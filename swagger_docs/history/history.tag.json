@@ -1,0 +1,8 @@
+{
+  "tags": [
+    {
+      "name": "historical logs",
+      "description": "All REST API calls available for historical logs."
+    }
+  ]
+}

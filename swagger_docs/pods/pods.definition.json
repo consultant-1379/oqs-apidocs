@@ -1,0 +1,76 @@
+{
+  "definitions": {
+    "Pod": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_]*$",
+          "minLength": 5,
+          "maxLength": 20,
+          "unique": true,
+          "example": "Cloud1a"
+        },
+        "queueEnabled":
+        {
+          "type": "boolean",
+          "example": false
+        },
+        "products": {
+          "type": "array",
+          "note": "List of products.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "loadValue"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": ["vENM", "cENM", "CCD"],
+                "example": "vENM"
+              },
+              "loadValue": {
+                "type": "number",
+                "example": "15"
+              },
+              "timeoutValue": {
+                "type": "number",
+                "example": "60"
+              }
+            }
+          }
+        },
+        "podLoadTolerance":
+        {
+          "type": "number",
+          "min": 1,
+          "example": 50
+        },
+        "timeoutDuration":
+        {
+          "type": "number",
+          "min": 1,
+          "example": 60
+        },
+        "deployments":
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example":  ["deployment1a", "deployment1b"]
+        },
+        "productType":
+        {
+          "type": "string",
+          "enum": ["All", "vENM", "cENM", "CCD"],
+          "example": "vENM"
+        }
+      }
+    }
+  }
+}

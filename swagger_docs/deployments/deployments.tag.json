@@ -1,0 +1,8 @@
+{
+  "tags": [
+    {
+      "name": "deployments",
+      "description": "All REST API calls available for deployments."
+    }
+  ]
+}
